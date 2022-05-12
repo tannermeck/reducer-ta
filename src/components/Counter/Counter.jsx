@@ -9,7 +9,7 @@ const colors = {
 let initialCount = { count: 0, color: 'rgb(236, 222, 153)' };
 
 const countReducer = (count, action) => {
-  console.log('COUNT:', action);
+  console.log('COUNT:', count, 'action', action);
   switch (action.type) {
     case 'add': {
       return { ...count, count: action.count + 1 };
