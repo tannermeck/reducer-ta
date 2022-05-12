@@ -20,14 +20,8 @@ const countReducer = (count, action) => {
     case 'reset': {
       return { ...count, count: (action.count = 0) };
     }
-    case 'yellow': {
-      return { ...count, color: 'rgb(236, 222, 153)' };
-    }
-    case 'red': {
-      return { ...count, color: colors.red };
-    }
-    case 'green': {
-      return { ...count, color: colors.green };
+    case 'CHANGE_COLOR': {
+      return { ...count, color: action.color };
     }
     default: {
       throw Error('Unknown action type');
@@ -35,44 +29,19 @@ const countReducer = (count, action) => {
   }
 };
 export default function Counter() {
-  // const [count, setCount] = useState(0);
-  // const [currentColor, setCurrentColor] = useState(colors.yellow);
-
   const [countObj, dispatch] = useReducer(countReducer, initialCount);
-  // const [color, setColor] = useState('rgb(236, 222, 153)');
-
-  const increment = () => {
-    dispatch({ type: 'add', count: countObj.count });
-  };
-
-  const decrement = () => {
-    dispatch({ type: 'subtract', count: countObj.count });
-  };
-
-  const reset = () => {
-    dispatch({ type: 'reset', count: countObj.count });
-  };
-  const changeRed = () => {
-    dispatch({ type: 'red', color: countObj.color });
-  };
-  const changeYellow = () => {
-    dispatch({ type: 'yellow', color: countObj.color });
-  };
-  const changeGreen = () => {
-    dispatch({ type: 'green', color: countObj.color });
-  };
 
   useEffect(() => {
     if (countObj.count === 0) {
-      changeYellow();
+      dispatch({ type: 'CHANGE_COLOR', color: colors.yellow });
     }
 
     if (countObj.count > 0) {
-      changeGreen();
+      dispatch({ type: 'CHANGE_COLOR', color: colors.green });
     }
 
     if (countObj.count < 0) {
-      changeRed();
+      dispatch({ type: 'CHANGE_COLOR', color: colors.red });
     }
   }, [countObj.count]);
 
@@ -82,7 +51,7 @@ export default function Counter() {
       <div>
         <button
           type="button"
-          onClick={increment}
+          onClick={() => dispatch({ type: 'add', ...countObj })}
           aria-label="increment"
           style={{ backgroundColor: colors.green }}
         >
@@ -90,7 +59,7 @@ export default function Counter() {
         </button>
         <button
           type="button"
-          onClick={decrement}
+          onClick={() => dispatch({ type: 'subtract', ...countObj })}
           aria-label="decrement"
           style={{ backgroundColor: colors.red }}
         >
@@ -99,7 +68,7 @@ export default function Counter() {
         <button
           type="button"
           aria-label="reset"
-          onClick={reset}
+          onClick={() => dispatch({ type: 'reset', ...countObj })}
           style={{ backgroundColor: colors.yellow }}
         >
           Reset
