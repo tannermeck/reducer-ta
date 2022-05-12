@@ -8,16 +8,26 @@ const colors = {
 };
 let initialCount = { count: 0, color: 'rgb(236, 222, 153)' };
 
-const countReducer = (state, action) => {
+const countReducer = (count, action) => {
+  console.log('COUNT:', action);
   switch (action.type) {
     case 'add': {
-      return state.count + 1;
+      return { ...count, count: action.count + 1 };
     }
     case 'subtract': {
-      return state.count - 1;
+      return { ...count, count: action.count - 1 };
     }
     case 'reset': {
-      return state.count === 0;
+      return { ...count, count: (action.count = 0) };
+    }
+    case 'yellow': {
+      return { ...count, color: 'rgb(236, 222, 153)' };
+    }
+    case 'red': {
+      return { ...count, color: colors.red };
+    }
+    case 'green': {
+      return { ...count, color: colors.green };
     }
     default: {
       throw Error('Unknown action type');
@@ -28,37 +38,47 @@ export default function Counter() {
   // const [count, setCount] = useState(0);
   // const [currentColor, setCurrentColor] = useState(colors.yellow);
 
-  const [state, dispatch] = useReducer(countReducer, initialCount);
+  const [countObj, dispatch] = useReducer(countReducer, initialCount);
+  // const [color, setColor] = useState('rgb(236, 222, 153)');
+
+  const increment = () => {
+    dispatch({ type: 'add', count: countObj.count });
+  };
+
+  const decrement = () => {
+    dispatch({ type: 'subtract', count: countObj.count });
+  };
+
+  const reset = () => {
+    dispatch({ type: 'reset', count: countObj.count });
+  };
+  const changeRed = () => {
+    dispatch({ type: 'red', color: countObj.color });
+  };
+  const changeYellow = () => {
+    dispatch({ type: 'yellow', color: countObj.color });
+  };
+  const changeGreen = () => {
+    dispatch({ type: 'green', color: countObj.color });
+  };
 
   useEffect(() => {
-    if (state.count === 0) {
-      setCurrentColor(colors.yellow);
+    if (countObj.count === 0) {
+      changeYellow();
     }
 
-    if (state.count > 0) {
-      setCurrentColor(colors.green);
+    if (countObj.count > 0) {
+      changeGreen();
     }
 
-    if (state.count < 0) {
-      setCurrentColor(colors.red);
+    if (countObj.count < 0) {
+      changeRed();
     }
-  }, [state.count]);
-
-  // const increment = () => {
-  //   setCount((prevState) => prevState + 1);
-  // };
-
-  // const decrement = () => {
-  //   setCount((prevState) => prevState - 1);
-  // };
-
-  // const reset = () => {
-  //   setCount(0);
-  // };
+  }, [countObj.count]);
 
   return (
     <main className={styles.main}>
-      <h1 style={{ color: currentColor }}>{count}</h1>
+      <h1 style={{ color: countObj.color }}>{countObj.count}</h1>
       <div>
         <button
           type="button"
